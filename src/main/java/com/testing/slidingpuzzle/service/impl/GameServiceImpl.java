@@ -2,15 +2,19 @@ package com.testing.slidingpuzzle.service.impl;
 
 import com.testing.slidingpuzzle.dao.GameDao;
 import com.testing.slidingpuzzle.dto.GameMoveRequestDto;
+import com.testing.slidingpuzzle.enums.MoveDirection;
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.GameService;
+import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 @Service
@@ -18,6 +22,7 @@ import java.util.stream.IntStream;
 public class GameServiceImpl implements GameService {
 
     private final GameDao gameDao;
+    private final Map<MoveDirection, MoveStrategy> moveStrategies;
     @Value("${board.size}")
     private int BOARD_SIZE;
 
@@ -32,7 +37,7 @@ public class GameServiceImpl implements GameService {
         for (int i = 0; i < BOARD_SIZE; i++) {
             board.add(tiles.subList(BOARD_SIZE * i, BOARD_SIZE * i + BOARD_SIZE));
         }
-        return gameDao.saveGame(new GameModel(board));
+        return gameDao.saveGame(new GameModel(board, LocalDateTime.now()));
     }
 
     @Override
@@ -43,7 +48,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public GameModel move(Long id, GameMoveRequestDto gameMoveRequestDto) {
         GameModel gameModel = getGame(id);
-        return gameMoveRequestDto.direction().getStrategy().move(gameModel);
+        return moveStrategies.get(gameMoveRequestDto.direction()).move(gameModel);
     }
 
     private boolean isSolvable(List<Integer> tiles) {

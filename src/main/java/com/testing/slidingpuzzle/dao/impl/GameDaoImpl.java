@@ -13,12 +13,11 @@ import java.util.Optional;
 public class GameDaoImpl implements GameDao {
 
     private final Map<Long, GameModel> games;
-    private Long id = 0L;
 
     @Override
     public Long saveGame(GameModel game) {
-        games.put(id, game);
-        return id++;
+        games.put((long) games.keySet().size(), game);
+        return (long) (games.keySet().size() - 1);
     }
 
     @Override

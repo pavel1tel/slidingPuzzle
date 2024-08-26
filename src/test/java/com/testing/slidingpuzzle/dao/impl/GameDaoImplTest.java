@@ -4,9 +4,10 @@ import com.testing.slidingpuzzle.model.GameModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,8 +20,8 @@ class GameDaoImplTest {
 
     private final long GAME_ID = 1L;
 
-    @Mock
-    private Map<Long, GameModel> games;
+    @Spy
+    private Map<Long, GameModel> games = new HashMap<>();
     @InjectMocks
     private GameDaoImpl testingInstance;
 

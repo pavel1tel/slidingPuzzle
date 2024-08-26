@@ -2,14 +2,35 @@ package com.testing.slidingpuzzle.service.strategy.impl;
 
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
-import lombok.extern.java.Log;
+import com.testing.slidingpuzzle.utils.BoardUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-@Log
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+@Component
 public class MoveDownStrategyImpl implements MoveStrategy {
 
+    @Value("${board.size}")
+    private int BOARD_SIZE;
+
     @Override
-    public GameModel move(GameModel gameModel) {
-        log.info("Move down strategy");
+    public GameModel move(final GameModel gameModel) {
+        List<Integer> boardFlat = new ArrayList<>(gameModel.getBoard().stream().flatMap(Collection::stream).toList());
+        int emptyTileIndex = boardFlat.indexOf(0);
+        int blankRow = emptyTileIndex / BOARD_SIZE;
+
+        if (blankRow == BOARD_SIZE - 1) {
+            throw new RuntimeException("Unable to move empty tile down");
+        }
+
+        int newEmptyTile = emptyTileIndex + BOARD_SIZE;
+        Collections.swap(boardFlat, emptyTileIndex, newEmptyTile);
+
+        gameModel.setBoard(BoardUtils.to2Dimensions(boardFlat, BOARD_SIZE));
         return gameModel;
     }
 }
