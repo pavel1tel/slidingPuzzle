@@ -1,5 +1,6 @@
 package com.testing.slidingpuzzle.service.strategy.impl;
 
+import com.testing.slidingpuzzle.exceptions.ProhibitedMoveException;
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
 import com.testing.slidingpuzzle.utils.BoardUtils;
@@ -24,7 +25,7 @@ public class MoveRightStrategyImpl implements MoveStrategy {
         int blankCol = emptyTileIndex % BOARD_SIZE;
 
         if (blankCol == BOARD_SIZE - 1) {
-            throw new RuntimeException("Unable to move empty tile right");
+            throw new ProhibitedMoveException("Unable to move empty tile right");
         }
 
         int newEmptyTile = emptyTileIndex + 1;

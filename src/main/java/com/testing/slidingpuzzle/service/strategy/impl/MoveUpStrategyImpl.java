@@ -1,5 +1,6 @@
 package com.testing.slidingpuzzle.service.strategy.impl;
 
+import com.testing.slidingpuzzle.exceptions.ProhibitedMoveException;
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
 import com.testing.slidingpuzzle.utils.BoardUtils;
@@ -24,7 +25,7 @@ public class MoveUpStrategyImpl implements MoveStrategy {
         int blankRow = emptyTileIndex / BOARD_SIZE;
 
         if (blankRow == 0) {
-            throw new RuntimeException("Unable to move empty tile up");
+            throw new ProhibitedMoveException("Unable to move empty tile up");
         }
 
         int newEmptyTile = emptyTileIndex - BOARD_SIZE;

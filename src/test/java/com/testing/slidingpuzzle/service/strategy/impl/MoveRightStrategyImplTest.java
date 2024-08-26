@@ -1,5 +1,6 @@
 package com.testing.slidingpuzzle.service.strategy.impl;
 
+import com.testing.slidingpuzzle.exceptions.ProhibitedMoveException;
 import com.testing.slidingpuzzle.model.GameModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,6 @@ class MoveRightStrategyImplTest {
 
         gameModel.setBoard(board);
 
-        assertThrows(RuntimeException.class, () -> testingInstance.move(gameModel));
+        assertThrows(ProhibitedMoveException.class, () -> testingInstance.move(gameModel));
     }
 }

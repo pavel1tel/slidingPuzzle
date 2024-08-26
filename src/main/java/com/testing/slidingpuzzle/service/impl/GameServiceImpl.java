@@ -3,6 +3,7 @@ package com.testing.slidingpuzzle.service.impl;
 import com.testing.slidingpuzzle.dao.GameDao;
 import com.testing.slidingpuzzle.dto.GameMoveRequestDto;
 import com.testing.slidingpuzzle.enums.MoveDirection;
+import com.testing.slidingpuzzle.exceptions.GameNotFoundException;
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.GameService;
 import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
@@ -42,7 +43,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public GameModel getGame(Long id) {
-        return gameDao.getGame(id).orElseThrow(() -> new RuntimeException("Game not found"));
+        return gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
     }
 
     @Override

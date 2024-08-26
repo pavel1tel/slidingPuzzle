@@ -3,6 +3,7 @@ package com.testing.slidingpuzzle.service.impl;
 import com.testing.slidingpuzzle.dao.GameDao;
 import com.testing.slidingpuzzle.dto.GameMoveRequestDto;
 import com.testing.slidingpuzzle.enums.MoveDirection;
+import com.testing.slidingpuzzle.exceptions.GameNotFoundException;
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
 import com.testing.slidingpuzzle.service.strategy.impl.MoveUpStrategyImpl;
@@ -61,7 +62,7 @@ class GameServiceImplTest {
     public void shouldThrowRuntimeExceptionWhenGameIsNotPresent() {
         when(gameDao.getGame(GAME_ID)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> testingInstance.getGame(GAME_ID));
+        assertThrows(GameNotFoundException.class, () -> testingInstance.getGame(GAME_ID));
     }
 
     @Test
