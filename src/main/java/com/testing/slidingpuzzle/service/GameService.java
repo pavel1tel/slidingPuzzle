@@ -1,13 +1,14 @@
 package com.testing.slidingpuzzle.service;
 
+import com.testing.slidingpuzzle.dto.CreateGameResponseDto;
+import com.testing.slidingpuzzle.dto.GameDto;
 import com.testing.slidingpuzzle.dto.GameMoveRequestDto;
-import com.testing.slidingpuzzle.model.GameModel;
 
 public interface GameService {
-    Long createGame();
+    CreateGameResponseDto createGame();
 
-    GameModel getGame(Long id);
+    GameDto getGame(Long id);
 
-    GameModel move(Long id,GameMoveRequestDto gameMoveRequestDto);
+    GameDto move(Long id, GameMoveRequestDto gameMoveRequestDto);
 
 }

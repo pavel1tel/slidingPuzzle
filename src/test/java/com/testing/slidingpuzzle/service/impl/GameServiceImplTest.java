@@ -4,6 +4,7 @@ import com.testing.slidingpuzzle.dao.GameDao;
 import com.testing.slidingpuzzle.dto.GameMoveRequestDto;
 import com.testing.slidingpuzzle.enums.MoveDirection;
 import com.testing.slidingpuzzle.exceptions.GameNotFoundException;
+import com.testing.slidingpuzzle.mapper.GameMapper;
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
 import com.testing.slidingpuzzle.service.strategy.impl.MoveUpStrategyImpl;
@@ -18,7 +19,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +33,8 @@ class GameServiceImplTest {
     private GameDao gameDao;
     @Mock
     private Map<MoveDirection, MoveStrategy> moveStrategies;
+    @Mock
+    private GameMapper gameMapper;
     @InjectMocks
     private GameServiceImpl testingInstance;
 
@@ -52,10 +56,10 @@ class GameServiceImplTest {
         GameModel gameModel = mock(GameModel.class);
         when(gameDao.getGame(GAME_ID)).thenReturn(Optional.ofNullable(gameModel));
 
-        GameModel result = testingInstance.getGame(GAME_ID);
+        testingInstance.getGame(GAME_ID);
 
         verify(gameDao).getGame(GAME_ID);
-        assertEquals(gameModel, result);
+        verify(gameMapper).toDto(gameModel);
     }
 
     @Test

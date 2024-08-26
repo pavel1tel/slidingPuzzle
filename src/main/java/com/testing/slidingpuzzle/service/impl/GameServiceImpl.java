@@ -1,9 +1,12 @@
 package com.testing.slidingpuzzle.service.impl;
 
 import com.testing.slidingpuzzle.dao.GameDao;
+import com.testing.slidingpuzzle.dto.CreateGameResponseDto;
+import com.testing.slidingpuzzle.dto.GameDto;
 import com.testing.slidingpuzzle.dto.GameMoveRequestDto;
 import com.testing.slidingpuzzle.enums.MoveDirection;
 import com.testing.slidingpuzzle.exceptions.GameNotFoundException;
+import com.testing.slidingpuzzle.mapper.GameMapper;
 import com.testing.slidingpuzzle.model.GameModel;
 import com.testing.slidingpuzzle.service.GameService;
 import com.testing.slidingpuzzle.service.strategy.MoveStrategy;
@@ -24,12 +27,13 @@ public class GameServiceImpl implements GameService {
 
     private final GameDao gameDao;
     private final Map<MoveDirection, MoveStrategy> moveStrategies;
+    private final GameMapper gameMapper;
     @Value("${board.size}")
     private int BOARD_SIZE;
 
 
     @Override
-    public Long createGame() {
+    public CreateGameResponseDto createGame() {
         List<Integer> tiles = new ArrayList<>(IntStream.range(0, BOARD_SIZE * BOARD_SIZE).boxed().toList());
         do {
             Collections.shuffle(tiles);
@@ -38,18 +42,18 @@ public class GameServiceImpl implements GameService {
         for (int i = 0; i < BOARD_SIZE; i++) {
             board.add(tiles.subList(BOARD_SIZE * i, BOARD_SIZE * i + BOARD_SIZE));
         }
-        return gameDao.saveGame(new GameModel(board, LocalDateTime.now()));
+        return new CreateGameResponseDto(gameDao.saveGame(new GameModel(board, LocalDateTime.now())));
     }
 
     @Override
-    public GameModel getGame(Long id) {
-        return gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
+    public GameDto getGame(Long id) {
+        return gameMapper.toDto(gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found")));
     }
 
     @Override
-    public GameModel move(Long id, GameMoveRequestDto gameMoveRequestDto) {
-        GameModel gameModel = getGame(id);
-        return moveStrategies.get(gameMoveRequestDto.direction()).move(gameModel);
+    public GameDto move(Long id, GameMoveRequestDto gameMoveRequestDto) {
+        GameModel gameModel = gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
+        return gameMapper.toDto(moveStrategies.get(gameMoveRequestDto.direction()).move(gameModel));
     }
 
     private boolean isSolvable(List<Integer> tiles) {
