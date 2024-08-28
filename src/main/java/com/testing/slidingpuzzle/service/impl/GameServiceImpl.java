@@ -5,6 +5,7 @@ import com.testing.slidingpuzzle.dto.CreateGameResponseDto;
 import com.testing.slidingpuzzle.dto.GameDto;
 import com.testing.slidingpuzzle.dto.GameMoveRequestDto;
 import com.testing.slidingpuzzle.enums.MoveDirection;
+import com.testing.slidingpuzzle.exceptions.GameAlreadyFinishedException;
 import com.testing.slidingpuzzle.exceptions.GameNotFoundException;
 import com.testing.slidingpuzzle.mapper.GameMapper;
 import com.testing.slidingpuzzle.model.GameModel;
@@ -53,7 +54,15 @@ public class GameServiceImpl implements GameService {
     @Override
     public GameDto move(Long id, GameMoveRequestDto gameMoveRequestDto) {
         GameModel gameModel = gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
-        return gameMapper.toDto(moveStrategies.get(gameMoveRequestDto.direction()).move(gameModel));
+        if (gameModel.isFinished()) {
+            throw new GameAlreadyFinishedException("Game is already finished");
+        }
+        GameModel updatedModel = moveStrategies.get(gameMoveRequestDto.direction()).move(gameModel);
+        if (isGameFinished(updatedModel.getBoard())) {
+            updatedModel.setEndTime(LocalDateTime.now());
+            updatedModel.setFinished(true);
+        }
+        return gameMapper.toDto(updatedModel);
     }
 
     private boolean isSolvable(List<Integer> tiles) {
@@ -70,5 +79,19 @@ public class GameServiceImpl implements GameService {
             return inversions % 2 == 0;
         }
         return (blankRow % 2 == 0) == (inversions % 2 != 0);
+    }
+
+    private boolean isGameFinished(List<List<Integer>> board) {
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < board.get(i).size(); j++) {
+                if (i == board.size() - 1 && j == board.size() - 1) {
+                    continue;
+                }
+                if (board.get(i).get(j) != ((i * board.size()) + j) + 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

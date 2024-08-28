@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 
@@ -12,17 +11,17 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> globalExceptionHandling(Exception exception, WebRequest request) {
+    public ResponseEntity<?> globalExceptionHandling(Exception exception) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(GameNotFoundException.class)
-    public ResponseEntity<?> gameNotFoundExceptionHandling(Exception exception, WebRequest request) {
+    public ResponseEntity<?> gameNotFoundExceptionHandling(Exception exception) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ProhibitedMoveException.class)
-    public ResponseEntity<?> prohibitedMoveException(Exception exception, WebRequest request) {
+    @ExceptionHandler({ProhibitedMoveException.class, GameAlreadyFinishedException.class})
+    public ResponseEntity<?> prohibitedMoveException(Exception exception) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

@@ -7,6 +7,5 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface GameMapper {
-    GameModel toModel(GameDto gameDto);
     GameDto toDto(GameModel gameModel);
 }
