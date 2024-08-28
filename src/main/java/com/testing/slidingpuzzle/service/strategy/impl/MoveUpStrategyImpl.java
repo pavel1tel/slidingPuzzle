@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 public class MoveUpStrategyImpl implements MoveStrategy {
 
-    private final String UNABLE_TO_MOVE_EXCEPTION = "Unable to move empty tile upt";
+    private final String UNABLE_TO_MOVE_EXCEPTION = "Unable to move empty tile up";
 
     @Value("${board.size}")
     private int BOARD_SIZE;
