@@ -23,6 +23,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProhibitedMoveException.class)
     public ResponseEntity<?> prohibitedMoveException(Exception exception, WebRequest request) {
-        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
