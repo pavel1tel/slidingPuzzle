@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static com.testing.slidingpuzzle.utils.BoardUtils.to2Dimensions;
+
 @Service
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
@@ -39,16 +41,18 @@ public class GameServiceImpl implements GameService {
         do {
             Collections.shuffle(tiles);
         } while (!isSolvable(tiles));
-        List<List<Integer>> board = new ArrayList<>(BOARD_SIZE * BOARD_SIZE);
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            board.add(tiles.subList(BOARD_SIZE * i, BOARD_SIZE * i + BOARD_SIZE));
-        }
+        List<List<Integer>> board = to2Dimensions(tiles, BOARD_SIZE);
         return new CreateGameResponseDto(gameDao.saveGame(new GameModel(board, LocalDateTime.now())));
     }
 
     @Override
     public GameDto getGame(Long id) {
         return gameMapper.toDto(gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found")));
+    }
+
+    @Override
+    public List<GameDto> getGames() {
+        return gameMapper.toDtoList(gameDao.getGames());
     }
 
     @Override

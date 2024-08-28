@@ -8,6 +8,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,5 +65,17 @@ class GameDaoImplTest {
 
         verify(games).get(GAME_ID);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void shouldGetGames() {
+        GameModel gameModel = mock(GameModel.class);
+        when(games.values()).thenReturn(List.of(gameModel));
+
+        List<GameModel> result = testingInstance.getGames();
+
+        verify(games).values();
+        assertEquals(1, result.size());
+        assertEquals(gameModel, result.get(0));
     }
 }

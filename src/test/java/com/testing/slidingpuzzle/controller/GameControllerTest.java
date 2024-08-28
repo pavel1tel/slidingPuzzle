@@ -42,4 +42,11 @@ class GameControllerTest {
 
         verify(gameService).move(GAME_ID, gameMoveRequestDto);
     }
+
+    @Test
+    public void shouldGetGames() {
+        testingInstance.getGames();
+
+        verify(gameService).getGames();
+    }
 }

@@ -5,6 +5,7 @@ import com.testing.slidingpuzzle.model.GameModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,6 +24,11 @@ public class GameDaoImpl implements GameDao {
     @Override
     public Optional<GameModel> getGame(Long id) {
         return Optional.ofNullable(games.get(id));
+    }
+
+    @Override
+    public List<GameModel> getGames() {
+        return games.values().stream().toList();
     }
 
     @Override

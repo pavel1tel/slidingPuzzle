@@ -118,4 +118,12 @@ class GameServiceImplTest {
 
         assertThrows(GameAlreadyFinishedException.class, () -> testingInstance.move(GAME_ID, gameMoveRequestDto));
     }
+
+    @Test
+    public void shouldGetGames() {
+        testingInstance.getGames();
+
+        verify(gameDao).getGames();
+        verify(gameMapper).toDtoList(anyList());
+    }
 }

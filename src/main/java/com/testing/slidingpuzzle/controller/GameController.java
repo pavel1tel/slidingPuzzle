@@ -7,6 +7,8 @@ import com.testing.slidingpuzzle.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/game")
 @RequiredArgsConstructor
@@ -28,5 +30,10 @@ public class GameController {
     @PostMapping("/{id}")
     public GameDto move(@PathVariable("id") long id, @RequestBody GameMoveRequestDto gameMoveRequestDto) {
         return gameService.move(id, gameMoveRequestDto);
+    }
+
+    @GetMapping()
+    public List<GameDto> getGames() {
+        return gameService.getGames();
     }
 }
