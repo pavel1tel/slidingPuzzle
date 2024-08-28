@@ -15,6 +15,8 @@ import java.util.List;
 @Component
 public class MoveLeftStrategyImpl implements MoveStrategy {
 
+    private final String UNABLE_TO_MOVE_EXCEPTION = "Unable to move empty tile left";
+
     @Value("${board.size}")
     private int BOARD_SIZE;
 
@@ -25,7 +27,7 @@ public class MoveLeftStrategyImpl implements MoveStrategy {
         int blankRow = emptyTileIndex % BOARD_SIZE;
 
         if (blankRow == 0) {
-            throw new ProhibitedMoveException("Unable to move empty tile left");
+            throw new ProhibitedMoveException(UNABLE_TO_MOVE_EXCEPTION);
         }
 
         int newEmptyTile = emptyTileIndex - 1;

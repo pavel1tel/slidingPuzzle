@@ -30,14 +30,4 @@ public class GameDaoImpl implements GameDao {
     public List<GameModel> getGames() {
         return games.values().stream().toList();
     }
-
-    @Override
-    public GameModel updateGame(GameModel game) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeGame(int id) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

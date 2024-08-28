@@ -22,11 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static com.testing.slidingpuzzle.utils.BoardUtils.to2Dimensions;
+import static com.testing.slidingpuzzle.utils.BoardUtils.*;
 
 @Service
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
+
+    private final String GAME_NOT_FOUND_EXCEPTION = "Game not found";
+    private final String GAME_ALREADY_FINISHED_EXCEPTION = "Game is already finished";
 
     private final GameDao gameDao;
     private final Map<MoveDirection, MoveStrategy> moveStrategies;
@@ -40,14 +43,14 @@ public class GameServiceImpl implements GameService {
         List<Integer> tiles = new ArrayList<>(IntStream.range(0, BOARD_SIZE * BOARD_SIZE).boxed().toList());
         do {
             Collections.shuffle(tiles);
-        } while (!isSolvable(tiles));
+        } while (!isSolvable(tiles, BOARD_SIZE));
         List<List<Integer>> board = to2Dimensions(tiles, BOARD_SIZE);
         return new CreateGameResponseDto(gameDao.saveGame(new GameModel(board, LocalDateTime.now())));
     }
 
     @Override
-    public GameDto getGame(Long id) {
-        return gameMapper.toDto(gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found")));
+    public GameDto getGame(final Long id) {
+        return gameMapper.toDto(gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND_EXCEPTION)));
     }
 
     @Override
@@ -56,10 +59,10 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameDto move(Long id, GameMoveRequestDto gameMoveRequestDto) {
-        GameModel gameModel = gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
+    public GameDto move(final Long id, final GameMoveRequestDto gameMoveRequestDto) {
+        GameModel gameModel = gameDao.getGame(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND_EXCEPTION));
         if (gameModel.isFinished()) {
-            throw new GameAlreadyFinishedException("Game is already finished");
+            throw new GameAlreadyFinishedException(GAME_ALREADY_FINISHED_EXCEPTION);
         }
         GameModel updatedModel = moveStrategies.get(gameMoveRequestDto.direction()).move(gameModel);
         if (isGameFinished(updatedModel.getBoard())) {
@@ -67,35 +70,5 @@ public class GameServiceImpl implements GameService {
             updatedModel.setFinished(true);
         }
         return gameMapper.toDto(updatedModel);
-    }
-
-    private boolean isSolvable(List<Integer> tiles) {
-        int inversions = 0;
-        for (int i = 0; i < tiles.size(); i++) {
-            for (int j = i + 1; j < tiles.size(); j++) {
-                if (tiles.get(i) > tiles.get(j) && tiles.get(j) != 0) {
-                    inversions++;
-                }
-            }
-        }
-        int blankRow = BOARD_SIZE - (tiles.indexOf(0) / BOARD_SIZE);
-        if (BOARD_SIZE % 2 != 0) {
-            return inversions % 2 == 0;
-        }
-        return (blankRow % 2 == 0) == (inversions % 2 != 0);
-    }
-
-    private boolean isGameFinished(List<List<Integer>> board) {
-        for (int i = 0; i < board.size(); i++) {
-            for (int j = 0; j < board.get(i).size(); j++) {
-                if (i == board.size() - 1 && j == board.size() - 1) {
-                    continue;
-                }
-                if (board.get(i).get(j) != ((i * board.size()) + j) + 1) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }

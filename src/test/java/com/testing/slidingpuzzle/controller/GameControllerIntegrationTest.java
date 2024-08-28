@@ -34,7 +34,7 @@ class GameControllerIntegrationTest {
 
     @Test
     public void shouldCreateGame() throws Exception {
-        mockMvc.perform(post("/api/game"))
+        mockMvc.perform(post("/api/v1/games"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.gameId").value("0"))
@@ -43,13 +43,13 @@ class GameControllerIntegrationTest {
 
     @Test
     public void shouldCreateGameTwiceWithSameIdWhenNewSession() throws Exception {
-        mockMvc.perform(post("/api/game"))
+        mockMvc.perform(post("/api/v1/games"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.gameId").value("0"))
                 .andReturn();
 
-        mockMvc.perform(post("/api/game"))
+        mockMvc.perform(post("/api/v1/games"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.gameId").value("0"));
@@ -57,7 +57,7 @@ class GameControllerIntegrationTest {
 
     @Test
     public void shouldCreateGameTwiceWithNewIdWhenSameSession() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post("/api/game"))
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/games"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.gameId").value("0"))
@@ -65,7 +65,7 @@ class GameControllerIntegrationTest {
 
         MockHttpSession session = (MockHttpSession) mvcResult.getRequest().getSession();
 
-        mockMvc.perform(post("/api/game").session(session))
+        mockMvc.perform(post("/api/v1/games").session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.gameId").value("1"));
@@ -73,7 +73,7 @@ class GameControllerIntegrationTest {
 
     @Test
     public void shouldGetGameById() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post("/api/game"))
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/games"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.gameId").value("0"))
@@ -81,7 +81,7 @@ class GameControllerIntegrationTest {
 
         MockHttpSession session = (MockHttpSession) mvcResult.getRequest().getSession();
 
-        mockMvc.perform(get("/api/game/0").session(session))
+        mockMvc.perform(get("/api/v1/games/0").session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.board").isArray());
@@ -89,7 +89,7 @@ class GameControllerIntegrationTest {
 
     @Test
     public void shouldThrowExceptionWhenGameIsNotFound() throws Exception {
-        mockMvc.perform(get("/api/game/0"))
+        mockMvc.perform(get("/api/v1/games/0"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").isNotEmpty());
@@ -100,7 +100,7 @@ class GameControllerIntegrationTest {
         GameModel gameModel = new GameModel(createBoard(), LocalDateTime.now());
         when(gameDao.getGame(0L)).thenReturn(Optional.of(gameModel));
 
-        mockMvc.perform(post("/api/game/0")
+        mockMvc.perform(post("/api/v1/games/0")
                         .content("{\"direction\" : \"UP\"}")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -114,7 +114,7 @@ class GameControllerIntegrationTest {
         GameModel gameModel = new GameModel(createBoard(), LocalDateTime.now());
         when(gameDao.getGame(0L)).thenReturn(Optional.of(gameModel));
 
-        MvcResult mvcResult = mockMvc.perform(post("/api/game/0")
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/games/0")
                         .content("{\"direction\" : \"UP\"}")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -125,7 +125,7 @@ class GameControllerIntegrationTest {
 
         MockHttpSession session = (MockHttpSession) mvcResult.getRequest().getSession();
 
-        mockMvc.perform(post("/api/game/0")
+        mockMvc.perform(post("/api/v1/games/0")
                         .content("{\"direction\" : \"UP\"}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session)
@@ -135,4 +135,20 @@ class GameControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").isNotEmpty());
     }
 
+    @Test
+    public void shouldGetGame() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/games"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.gameId").value("0"))
+                .andReturn();
+
+        MockHttpSession session = (MockHttpSession) mvcResult.getRequest().getSession();
+
+        mockMvc.perform(get("/api/v1/games").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].board").isArray());
+    }
 }

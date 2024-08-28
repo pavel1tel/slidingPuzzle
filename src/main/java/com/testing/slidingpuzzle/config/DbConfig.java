@@ -13,7 +13,7 @@ public class DbConfig {
 
     @Bean
     @SessionScope
-    public Map<Long, GameModel> games(){
+    public Map<Long, GameModel> games() {
         return new HashMap<>();
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/game")
+@RequestMapping("/api/v1/games")
 @RequiredArgsConstructor
 public class GameController {
 
@@ -23,12 +23,13 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public GameDto getGameById(@PathVariable("id") long id) {
+    public GameDto getGameById(@PathVariable("id") final long id) {
         return gameService.getGame(id);
     }
 
     @PostMapping("/{id}")
-    public GameDto move(@PathVariable("id") long id, @RequestBody GameMoveRequestDto gameMoveRequestDto) {
+    public GameDto move(@PathVariable("id") final long id,
+                        @RequestBody final GameMoveRequestDto gameMoveRequestDto) {
         return gameService.move(id, gameMoveRequestDto);
     }
 

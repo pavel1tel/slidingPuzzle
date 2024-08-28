@@ -11,8 +11,4 @@ public interface GameDao {
     Optional<GameModel> getGame(Long id);
 
     List<GameModel> getGames();
-
-    GameModel updateGame(GameModel game);
-
-    void removeGame(int id);
 }
